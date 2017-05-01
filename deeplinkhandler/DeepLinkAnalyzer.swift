@@ -12,7 +12,7 @@ class DeepLinkAnalyzer: DeepLinkAnalyzerProtocol {
     
     var registry = [DeepLinkEntry]()
     
-    fileprivate func load() {
+    func load() {
         //load list page urls
         registry.append(DeepLinkEntry(pattern: URLProvider.listWithPage, closure: URLProvider.handListWithPage))
         registry.append(DeepLinkEntry(pattern: URLProvider.listUrl, closure: URLProvider.handList))
@@ -36,26 +36,25 @@ class DeepLinkAnalyzer: DeepLinkAnalyzerProtocol {
         
     }
     
-    func parseURL(url: URL) -> Bool {
-        load()
-        if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let path = components.path, let scheme = components.scheme, let host = components.host {
-            self.load()
-            let deepLinkPath = scheme + "://" + host + path
-            //let range = NSRange(location: 0, length: deepLinkPath.characters.count)
-            for entry in registry {
-                if entry.isMatchingWithPattern(url: deepLinkPath) {
-                    //return entry.openScreen(url: deepLinkPath + (components.query ?? ""), queryItems: components.queryItems)
-                    return entry.openScreen(url: url.absoluteString, queryItems: components.queryItems)
-                }
-            }
-            
-            if host == "www.example.com" {
-                // fallback to url
-                // let model = DeepLinkModel(type: .webview(url: url.absoluteString))
-                // return URLProvider.setForLaunch(deepLinkModel: model)
-            }
-        }
-        return false
-
-    }
+    //Uncomment to handle Fallback in Webview
+//    func parseURL(url: URL) -> Bool {
+//        if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let path = components.path, let scheme = components.scheme, let host = components.host {
+//            self.load()
+//            let deepLinkPath = scheme + "://" + host + path
+//            //let range = NSRange(location: 0, length: deepLinkPath.characters.count)
+//            for entry in registry {
+//                if entry.isMatchingWithPattern(url: deepLinkPath) {
+//                    //return entry.openScreen(url: deepLinkPath + (components.query ?? ""), queryItems: components.queryItems)
+//                    return entry.openScreen(url: url.absoluteString, queryItems: components.queryItems)
+//                }
+//            }
+//            
+//            if host == "www.example.com" {
+//                // fallback to url
+//                // let model = DeepLinkModel(type: .webview(url: url.absoluteString))
+//                // return URLProvider.setForLaunch(deepLinkModel: model)
+//            }
+//        }
+//        return false
+//    }
 }

@@ -112,5 +112,23 @@ struct DeepLinkParams {
 
 protocol DeepLinkAnalyzerProtocol{
     var registry: [DeepLinkEntry] {get}
-    func parseURL(url: URL) -> Bool
+    func load()
+}
+
+extension DeepLinkAnalyzerProtocol {
+    func parseURL(url: URL) -> Bool {
+        if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let path = components.path, let scheme = components.scheme, let host = components.host {
+            load()
+            let deepLinkPath = scheme + "://" + host + path
+            //let range = NSRange(location: 0, length: deepLinkPath.characters.count)
+            for entry in registry {
+                if entry.isMatchingWithPattern(url: deepLinkPath) {
+                    //return entry.openScreen(url: deepLinkPath + (components.query ?? ""), queryItems: components.queryItems)
+                    return entry.openScreen(url: url.absoluteString, queryItems: components.queryItems)
+                }
+            }
+        }
+        return false
+        
+    }
 }
